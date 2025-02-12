@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import os
 import re
 import time
@@ -43,7 +45,7 @@ class FileMonitorHandler(FileSystemEventHandler):
             bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
             chat_id = os.getenv("TELEGRAM_CHAT_ID")
             file_path = escape_markdown_v2(file_path)
-            message = f"*⚠️ Alert\! A new monitored file was detected ⚠️*\n\n{file_path}"
+            message = f"*⚠️ A new monitored file was detected ⚠️*\n\n{file_path}"
             url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
 
             response = requests.post(
