@@ -146,21 +146,23 @@ if __name__ == "__main__":
 
     # Set logging format and config
     log_level = os.getenv('LOG_TYPE', 'INFO').upper()
-    fmt = "%(asctime)s:%(levelname)s:%(name)s - %(message)s"
+    fmt = "%(asctime)s - %(levelname)s - %(name)s: %(message)s"
     if log_level == "DEBUG":
-        logging.getLogger("httpx").setLevel(logging.INFO)
-        fmt += " - {%(pathname)s:%(module)s:%(funcName)s:%(lineno)d}"
+        fmt += " - {%(pathname)s - %(module)s - %(funcName)s - %(lineno)d}"
 
     # Set name and create the log file and folder if not exist
     log_folder = os.getenv("LOG_FOLDER", "log")
-    log_file = f"{log_folder}/file-monitor-{time.strftime('%Y-%m-%d_%H-%M-%S')}.log"
+    log_file = f"{log_folder}/file-monitor-{time.strftime('%Y-%m-%d')}.log"
     Path(log_folder).mkdir(parents=True, exist_ok=True)
     Path(log_file).touch(exist_ok=True)
+
+    # Set logging level
+    logging_level = getattr(logging, log_level, logging.INFO)
 
     # Setup the logging config
     logging.basicConfig(
         filename=log_file,
-        level=getattr(logging, log_level, logging.INFO),
+        level=logging_level,
         format=fmt,
         datefmt='%d-%m-%Y %H:%M:%S'
     )
@@ -168,9 +170,9 @@ if __name__ == "__main__":
     # Enable console logging if verbose flag is set
     if args.verbose:
         console = logging.StreamHandler()
-        console.setLevel(getattr(logging, log_level, logging.INFO))
+        console.setLevel(logging_level)
         console.setFormatter(logging.Formatter(
-            '%(levelname)s:%(name)s:%(asctime)s - %(message)s'))
+            "%(asctime)s - %(levelname)s - %(name)s: %(message)s, '%Y-%m-%d %H:%M:%S'"))
         logging.getLogger("").addHandler(console)
 
     # Process file extensions from environment variables
