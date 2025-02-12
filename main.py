@@ -18,13 +18,11 @@ class FileMonitorHandler(FileSystemEventHandler):
         """Initialize the event handler with file extensions to monitor."""
         self.file_extensions = file_extensions
 
-
     def on_created(self, event: FileSystemEvent) -> None:
         """Triggered when a new file is created."""
         if not event.is_directory:
             logging.info(f"New file: {event.src_path}")
             self.process_file(event.src_path)
-
 
     def on_moved(self, event: FileSystemEvent) -> None:
         """Triggered when a file is renamed or moved."""
@@ -32,14 +30,12 @@ class FileMonitorHandler(FileSystemEventHandler):
             logging.info(f"File renamed/moved: {event.src_path} -> {event.dest_path}")
             self.process_file(event.dest_path)
 
-
     def process_file(self, file_path: str) -> None:
         """Process file if it matches the monitored extensions."""
         file_ext = os.path.splitext(file_path)[1].lower()
         if file_ext in self.file_extensions:
             logging.warning(f"Detected monitored file: {file_path}")
             self.send_telegram_message(file_path)
-
 
     def send_telegram_message(self, file_path: str) -> None:
         """Send a Telegram message using the raw Telegram API via requests."""
@@ -50,7 +46,8 @@ class FileMonitorHandler(FileSystemEventHandler):
             message = f"*⚠️ Alert\! A new monitored file was detected ⚠️*\n\n{file_path}"
             url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
 
-            response = requests.post(url, json={"chat_id": chat_id, "text": message, "parse_mode": "MarkdownV2"})
+            response = requests.post(
+                url, json={"chat_id": chat_id, "text": message, "parse_mode": "MarkdownV2"})
 
             if response.status_code == 200:
                 logging.info("Telegram message sent successfully!")
@@ -84,8 +81,9 @@ def monitor_folder(folder_path: str, file_extensions: list[str]) -> None:
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
     chat_id = os.getenv("TELEGRAM_CHAT_ID")
     url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-    requests.post(url, json={"chat_id": chat_id, "text": "*ℹ️ File monitoring script started ℹ️*", "parse_mode": "MarkdownV2"})
-    
+    requests.post(url, json={
+                  "chat_id": chat_id, "text": "*ℹ️ File monitoring script started ℹ️*", "parse_mode": "MarkdownV2"})
+
     try:
         # Keep the script running indefinitely
         while True:
@@ -94,14 +92,16 @@ def monitor_folder(folder_path: str, file_extensions: list[str]) -> None:
     except KeyboardInterrupt:
         # Handle script termination via keyboard interrupt (Ctrl+C)
         logging.info("Monitoring stopped by user")
-        requests.post(url, json={"chat_id": chat_id, "text": "*🛑 File monitoring script stopped by user 🛑*", "parse_mode": "MarkdownV2"})
+        requests.post(url, json={
+                      "chat_id": chat_id, "text": "*🛑 File monitoring script stopped by user 🛑*", "parse_mode": "MarkdownV2"})
 
     except Exception as e:
         # Handle unexpected errors
         error_details = traceback.format_exc()
         logging.error(f"Unexpected error: {repr(e)}\n{error_details}")
         error_message = escape_markdown_v2(str(e))
-        requests.post(url, json={"chat_id": chat_id, "text": f"*⚠️ File monitoring script crashed ⚠️*\n\n{error_message}", "parse_mode": "MarkdownV2"})
+        requests.post(url, json={
+                      "chat_id": chat_id, "text": f"*⚠️ File monitoring script crashed ⚠️*\n\n{error_message}", "parse_mode": "MarkdownV2"})
 
     finally:
         # Ensure the observer stops gracefully
@@ -112,7 +112,8 @@ def monitor_folder(folder_path: str, file_extensions: list[str]) -> None:
 
 def validate_env_vars() -> None:
     """Ensures required environment variables are set before execution."""
-    required_vars = ["TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID", "FOLDER_MONITOR_LIVE", "FOLDER_MONITOR_DEV", "FILE_EXTENSIONS", "LOG_TYPE", "LOG_FOLDER"]
+    required_vars = ["TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID", "FOLDER_MONITOR_LIVE",
+                     "FOLDER_MONITOR_DEV", "FILE_EXTENSIONS", "LOG_TYPE", "LOG_FOLDER"]
     missing_vars = [var for var in required_vars if not os.getenv(var)]
 
     if missing_vars:
@@ -123,17 +124,21 @@ def validate_env_vars() -> None:
 if __name__ == "__main__":
 
     # Parse CLI arguments
-    parser = argparse.ArgumentParser(description='Intrusive file monitor script')
-    parser.add_argument('-v', '--verbose', action='store_true', help='Enable console logging')
+    parser = argparse.ArgumentParser(
+        description='Intrusive file monitor script')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='Enable console logging')
     parser.add_argument('-e', '--env', help='Environment value: live / dev')
     args = parser.parse_args()
 
     # Load environment variables
     if args.env not in ["live", "dev"]:
-        parser.error("Environment value --env/-e required.\nPossible values: live / dev")
+        parser.error(
+            "Environment value --env/-e required.\nPossible values: live / dev")
 
     # Load .env file
-    path = Path("/root/scripts/file-monitor-script/dot-env") if args.env == "live" else Path("dot-env")
+    path = Path(
+        "/root/scripts/file-monitor-script/dot-env") if args.env == "live" else Path("dot-env")
     load_dotenv(dotenv_path=path)
 
     # Validate environment variables
@@ -164,14 +169,17 @@ if __name__ == "__main__":
     if args.verbose:
         console = logging.StreamHandler()
         console.setLevel(getattr(logging, log_level, logging.INFO))
-        console.setFormatter(logging.Formatter('%(levelname)s:%(name)s:%(asctime)s - %(message)s'))
+        console.setFormatter(logging.Formatter(
+            '%(levelname)s:%(name)s:%(asctime)s - %(message)s'))
         logging.getLogger("").addHandler(console)
 
     # Process file extensions from environment variables
-    file_extensions = [ext.strip().lower() for ext in os.getenv("FILE_EXTENSIONS", "").split(",") if ext.strip()]
+    file_extensions = [ext.strip().lower() for ext in os.getenv(
+        "FILE_EXTENSIONS", "").split(",") if ext.strip()]
 
     # Determine which folder to monitor
-    folder_monitor = os.getenv("FOLDER_MONITOR_LIVE") if args.env == "live" else os.getenv("FOLDER_MONITOR_DEV")
+    folder_monitor = os.getenv(
+        "FOLDER_MONITOR_LIVE") if args.env == "live" else os.getenv("FOLDER_MONITOR_DEV")
 
     # Start monitoring if folder exists
     if not os.path.exists(folder_monitor):
