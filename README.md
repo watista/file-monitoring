@@ -37,3 +37,20 @@ sudo systemctl daemon-reload
 sudo systemctl enable file-monitoring.service
 sudo systemctl start file-monitoring.service
 ```
+
+## Usage
+```
+# Run the script
+~./file-monitoring/env/bin/python3 ~./file-monitoring/main.py
+# or
+source ~./file-monitoring/env/bin/activate
+python3 ~./file-monitoring/main.py
+
+# Arguments
+./main.py -h              # Show help
+./main.py -v              # Show console output
+./main.py --verbose       # Show console output
+./main.py -e dev/live     # Set env to dev or live
+./main.py --env dev/live  # Set env to dev or live
+
+```
