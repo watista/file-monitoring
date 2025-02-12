@@ -138,7 +138,7 @@ if __name__ == "__main__":
 
     # Load .env file
     path = Path(
-        "/root/scripts/file-monitor-script/dot-env") if args.env == "live" else Path("dot-env")
+        "/root/scripts/file-monitoring/dot-env") if args.env == "live" else Path("dot-env")
     load_dotenv(dotenv_path=path)
 
     # Validate environment variables

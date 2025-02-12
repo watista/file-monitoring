@@ -29,7 +29,7 @@ deactivate
 ```
 
 ## Create systemd service
-Create `/etc/systemd/system/plex-download-bot.service` from `~/plex-download-bot/file-monitoring.service`
+Create `/etc/systemd/system/file-monitoring.service` from `~/file-monitoring/file-monitoring.service`
 
 Enable and start the service
 ```
