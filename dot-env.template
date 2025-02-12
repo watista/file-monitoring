@@ -1,0 +1,7 @@
+TELEGRAM_BOT_TOKEN=your-telegram-bot-token
+TELEGRAM_CHAT_ID=your-chat-id
+FOLDER_MONITOR_LIVE=C:/path/to/your/folder
+FOLDER_MONITOR_DEV=C:/path/to/your/folder
+FILE_EXTENSIONS=.lnk,.exe,.bat
+LOG_TYPE=INFO
+LOG_FOLDER=log

@@ -1,0 +1,15 @@
+[Unit]
+Description=Intrustive file monitoring script
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/root/scripts/file-monitoring
+ExecStart=/root/scripts/file-monitoring/env/bin/python /root/scripts/file-monitoring/main.py --env live
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+Alias=file-monitoring.service
