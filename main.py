@@ -7,7 +7,7 @@ import logging
 import argparse
 import requests
 import traceback
-import psutil
+from setproctitle import setproctitle
 from pathlib import Path
 from dotenv import load_dotenv
 from watchdog.observers import Observer
@@ -127,7 +127,7 @@ def validate_env_vars() -> None:
 if __name__ == "__main__":
 
     # Set the custom process name
-    psutil.Process().name('file-monitoring')
+    setproctitle("file-monitoring")
 
     # Parse CLI arguments
     parser = argparse.ArgumentParser(
